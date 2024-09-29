@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/995bbca491.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Todo-Liste</title>
+    <style>
+    </style>
+</head>
+<body>
+
+    <!-- Aufgaben Auflistung -->
+    <div class="container">
+        <div class="header">Mein Tag</div>
+        <div class="subheader">Mittwoch, 25. September</div>
+
+        <!-- <div class="task">
+            <div class="task-info">
+                <input class="checkbox" type="checkbox"/>
+                <div class="task-floating">
+                    <div class="task-title">Aufgabentitel</div>
+                    <div class="task-details">&nbsp;<i style="font-size:13px" class="fa">&#xf073;</i>&nbsp; Fällig am •  &#128276; Erinnerung</div>
+                </div>
+            </div>
+            <div class="task-actions">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </div>
+        </div> -->
+
+        <button id="openModalBtn">Neue Aufgabe</button>
+
+    </div>
+
+
+    
+    <!-- Modalstruktur -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h1>Trag deine Aufgabe ein</h1><br>
+            <form id="popupForm">
+                <div>
+                    <label for="aufgabe">Aufgabe:*</label>
+                    <input type="text" id="aufgabe" name="aufgabe" placeholder="Beispiel: Einkauf erledigen ... " required><br><br>
+                </div>
+                <div>
+                    <label for="faellig">Fälligkeitsdatum:</label>
+                    <input type="text" id="faellig" name="faellig" placeholder="Datum auswählen ..." onfocus=" (this.type='date')  "><br><br>
+                </div>
+                <div>
+                    <label for="erinnerung">Erinnerung:</label>
+                    <input type="text" id="erinnerung" name="erinnerung" placeholder="Datum, Uhrzeit auswählen ..." onfocus=" (this.type='datetime-local') "><br><br>
+                </div>
+
+                <button type="button" id="button_close">Abbrechen</button>
+                <button type="submit" id="eintragen">Eintragen</button>
+            </form>
+            
+        </div>
+    </div>
+
+    <!-- Modal für das Bearbeiten einer bestehenden Aufgabe -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-edit">&times;</span>
+            <h1>Aufgabe bearbeiten</h1><br>
+            <form id="editForm">
+                <div>
+                    <label for="editAufgabe">Aufgabe:*</label>
+                    <input type="text" id="editAufgabe" name="editAufgabe" required><br><br>
+                </div>
+                <div>
+                    <label for="editFaellig">Fälligkeitsdatum:</label>
+                    <input type="text" id="editFaellig" name="editFaellig" onfocus=" (this.type='date') "><br><br>
+                </div>
+                <div>
+                    <label for="editErinnerung">Erinnerung:</label>
+                    <input type="text" id="editErinnerung" name="editErinnerung" onfocus=" (this.type='datetime-local') "><br><br>
+                </div>
+                <div>
+                    <label for="notizen">Notizen:</label>
+                    <textarea id="notizen" name="notizen" placeholder="Geben Sie Notizen ein..."></textarea><br><br>
+                </div>
+                <div>
+                    <label for="fileUpload">Datei anhängen:</label>
+                    <input type="file" id="fileUpload" name="fileUpload"><br><br>
+                </div>
+
+                <button type="button" id="closeEditForm">Abbrechen</button>
+                <button type="submit" id="editTask">Änderungen speichern</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="datum_de.js" defer></script>
+    <script src="anzeigen.js" defer></script>
+    <script src="main.js" defer></script>
+
+</body>
