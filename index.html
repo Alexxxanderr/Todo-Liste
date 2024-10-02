@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://kit.fontawesome.com/995bbca491.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>Todo-Liste</title>
     <style>
@@ -14,27 +15,19 @@
     <!-- Aufgaben Auflistung -->
     <div class="container">
         <div class="header">Mein Tag</div>
-        <div class="subheader">Mittwoch, 25. September</div>
-
-        <!-- <div class="task">
-            <div class="task-info">
-                <input class="checkbox" type="checkbox"/>
-                <div class="task-floating">
-                    <div class="task-title">Aufgabentitel</div>
-                    <div class="task-details">&nbsp;<i style="font-size:13px" class="fa">&#xf073;</i>&nbsp; Fällig am •  &#128276; Erinnerung</div>
-                </div>
-            </div>
-            <div class="task-actions">
-                <i class="fa-solid fa-pen-to-square"></i>
-            </div>
-        </div> -->
-
+        <div class="subheader"></div>
         <button id="openModalBtn">Neue Aufgabe</button>
-
     </div>
 
-
-    
+    <!-- Archiv Auflistung -->
+    <div class="container_button">
+        <button id="openModalBtn_archiv">Archiv anzeigen</button>
+    </div>
+    <div class="container_archiv" style="display: none;">
+        <!-- Hier kannst du die archivierten Einträge einfügen -->
+         <p>Es gibt noch keine Aufgaben im Archiv.</p>
+    </div>
+  
     <!-- Modalstruktur -->
     <div id="myModal" class="modal">
         <div class="modal-content">
@@ -43,21 +36,33 @@
             <form id="popupForm">
                 <div>
                     <label for="aufgabe">Aufgabe:*</label>
-                    <input type="text" id="aufgabe" name="aufgabe" placeholder="Beispiel: Einkauf erledigen ... " required><br><br>
+                    <input type="text" id="aufgabe" name="aufgabe" placeholder="Beispiel: Einkauf erledigen ... " required><br>
                 </div>
                 <div>
                     <label for="faellig">Fälligkeitsdatum:</label>
-                    <input type="text" id="faellig" name="faellig" placeholder="Datum auswählen ..." onfocus=" (this.type='date')  "><br><br>
+                    <input type="text" id="faellig" name="faellig" placeholder="Datum auswählen ..." onfocus=" (this.type='date')  "><br>
                 </div>
                 <div>
                     <label for="erinnerung">Erinnerung:</label>
-                    <input type="text" id="erinnerung" name="erinnerung" placeholder="Datum, Uhrzeit auswählen ..." onfocus=" (this.type='datetime-local') "><br><br>
+                    <input type="text" id="erinnerung" name="erinnerung" placeholder="Datum, Uhrzeit auswählen ..." onfocus=" (this.type='datetime-local') "><br>
                 </div>
 
                 <button type="button" id="button_close">Abbrechen</button>
                 <button type="submit" id="eintragen">Eintragen</button>
             </form>
             
+        </div>
+    </div>
+
+    <!-- Popup für Aufgabenanzeige -->
+    <div id="viewTaskModal"  class="modal">
+        <div class="modal-content">
+            <span class="close-view">&times;</span>
+            <h2>Aufgabe ansehen</h2>
+            <p><strong>Aufgabe:</strong> <span id="viewAufgabe"></span></p>
+            <p><strong>Fälligkeitsdatum:</strong> <span id="viewFaellig"></span></p>
+            <p><strong>Erinnerung:</strong> <span id="viewErinnerung"></span></p>
+            <p><strong>Notizen:</strong> <span id="viewNotizen"></span></p>
         </div>
     </div>
 
@@ -73,11 +78,11 @@
                 </div>
                 <div>
                     <label for="editFaellig">Fälligkeitsdatum:</label>
-                    <input type="text" id="editFaellig" name="editFaellig" onfocus=" (this.type='date') "><br><br>
+                    <input type="text" id="editFaellig" placeholder="Datum auswählen ..." name="editFaellig" onfocus=" (this.type='date') "><br><br>
                 </div>
                 <div>
                     <label for="editErinnerung">Erinnerung:</label>
-                    <input type="text" id="editErinnerung" name="editErinnerung" onfocus=" (this.type='datetime-local') "><br><br>
+                    <input type="text" id="editErinnerung" placeholder="Datum, Uhrzeit auswählen ..." name="editErinnerung" onfocus=" (this.type='datetime-local') "><br><br>
                 </div>
                 <div>
                     <label for="notizen">Notizen:</label>
@@ -93,8 +98,22 @@
             </form>
         </div>
     </div>
+    <audio id="myAudio" src="ton.mp3"></audio>
+
+    <!-- Das alertModal -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalHeader"></div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button class="modal-button" id="closeModal">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script src="datum_de.js" defer></script>
+    <script src="archiv.js" defer></script>
+    <script src="update_ui.js" defer></script>
     <script src="anzeigen.js" defer></script>
     <script src="main.js" defer></script>
 

@@ -1,33 +1,67 @@
 "use strict";
 
-// Elemente holen
-let modal = document.getElementById("myModal");
-let btn = document.getElementById("openModalBtn");
-let span = document.getElementsByClassName("close")[0];
-let form = document.getElementById("popupForm");
-let btn_close = document.getElementById("button_close");
+// Allgemeine Selektoren
+const modal = document.getElementById("myModal");
+const btn = document.getElementById("openModalBtn");
+const span = document.getElementsByClassName("close")[0];
+const form = document.getElementById("popupForm");
+const btn_close = document.getElementById("button_close");
+const subheader = document.querySelector(".subheader");
+const viewTaskModal = document.getElementById("viewTaskModal");
+const editModal = document.getElementById("editModal");
+const closeViewModal = document.querySelector(".close-view");
+const closeEditModal = document.querySelector(".close-edit");
+const editTaskBtn = document.getElementById("editTask");
+const openModalBtn_archiv = document.getElementById("openModalBtn_archiv");
+const container_archiv = document.querySelector(".container_archiv"); // Archivcontainer
 
 let eintraege = [];
+let archiv = [];
+let currentlyEditingId = null;
 
-// Das Modal öffnen, wenn auf den Button geklickt wird
-btn.onclick = function() {
-    modal.style.display = "block";
+// Datum anzeigen
+function datum_anzeigen() {
+    let datum_heute = new Date();
+    let datum_heute_DE = datum_heute.toLocaleDateString("de-DE", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "long"
+    });
+    subheader.innerHTML = datum_heute_DE;
 }
 
-// Das Modal schließen, wenn auf die Schließen-Schaltfläche geklickt wird
-span.onclick = function() {
-    modal.style.display = "none";
-}
-btn_close.onclick = function() {
-    modal.style.display = "none";
+datum_anzeigen();
+setInterval(datum_anzeigen, 60000);
+
+// Allgemeine Funktion für das Öffnen und Schließen von Modals
+function openModal(modalElement) {
+    modalElement.style.display = "block";
 }
 
-// Das Modal schließen, wenn außerhalb des Modals geklickt wird
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
+function closeModal(modalElement) {
+    modalElement.style.display = "none";
+}
+
+// Archiv anzeigen/ausblenden
+function open_archiv() {
+    if (container_archiv.style.display === "none" || container_archiv.style.display === "") {
+        container_archiv.style.display = "block"; // Archiv anzeigen
+    } else {
+        container_archiv.style.display = "none"; // Archiv ausblenden
     }
 }
+
+// Modal Event Listener (allgemein)
+btn.onclick = () => openModal(modal);
+span.onclick = () => closeModal(modal);
+btn_close.onclick = () => closeModal(modal);
+closeViewModal.onclick = () => closeModal(modal);
+openModalBtn_archiv.onclick = () => open_archiv();
+
+window.onclick = (event) => {
+    if (event.target == modal) closeModal(modal);
+};
 
 // Formularübertragung verarbeiten
 form.addEventListener("submit", event => {
@@ -47,60 +81,70 @@ form.addEventListener("submit", event => {
         erinnerung: erinnerung,
         notizen: "",
         id: Date.now(),
-        completed: false
+        completed: false,
+        isExample: false
     });
 
     updateUI();
-
-    // Formularfelder nach dem Hinzufügen zurücksetzen
-    document.querySelector("#aufgabe").value = "";
-    document.querySelector("#faellig").value = "";
-    document.querySelector("#erinnerung").value = "";
-
-    modal.style.display = "none";
+    form.reset();
+    closeModal(modal);
 });
 
-// Anzein der Aufgaben
-function updateUI() {
-    document.querySelectorAll(".container .task").forEach(e => {
-        e.remove();
-    });
-    
-    for (let eintrag of eintraege) {
-        html_eintrag(eintrag);
-    }
-}
+// Anzeigen der Aufgaben.
+// Das Intervall für die regelmäßige Aktualisierung der UI.
+// Dient hauptsächlich der dynamischen Anzeige von Erinnerungen und Fälligkeiten.
+setInterval(function() {
+    updateUI();  
+}, 60000);
 
 // Löschen von Aufgaben
 function loeschen(id) {
-    let check = confirm('Willst du wirklich diese Aufgabe löschen?'); 
-	if (check === true) {
+    let confirmed = confirm('Willst du wirklich diese Aufgabe löschen?'); 
+	if (confirmed) {
         eintraege = eintraege.filter(eintrag => eintrag.id !== id);
         updateUI(); 
     }
 }
 
-
-
-
-// Modal für Bearbeiten
-const editModal = document.getElementById("editModal");
-const closeEditModal = document.querySelector(".close-edit");
-const editTaskBtn = document.getElementById("editTask");
-
-// Variable zur Speicherung der ID des zu bearbeitenden Eintrags
-let currentlyEditingId = null;
-
-// Beispiel für das Öffnen des Bearbeitungsformulars
-function bearbeiten(eintragId) {
-    editModal.style.display = "block";
-
-    // Speichere die aktuelle Eintrags-ID, die bearbeitet wird
-    currentlyEditingId = eintragId;
-
-    // Finde die Aufgabe und fülle das Formular mit den aktuellen Werten
-    const eintrag = eintraege.find(e => e.id === eintragId);
+// Anzeigen von Details der Aufgaben sobald man auf die Aufgabe klickt.
+function anzeigen(eintragId) {
+    const eintrag = eintraege.find(e => e.id === eintragId); 
     if (eintrag) {
+        
+        let datum_DE = datum_de(eintrag.erinnerung);
+
+        let faellig = new Date(eintrag.faellig);
+        faellig = faellig.toLocaleString("de-DE", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        });
+
+        document.getElementById("viewAufgabe").textContent = eintrag.name;
+        document.getElementById("viewFaellig").textContent = faellig !== "Invalid Date" ? "Am " + faellig : "";
+        document.getElementById("viewErinnerung").textContent = datum_DE ? "Am " + datum_DE + " Uhr" : "";
+        document.getElementById("viewNotizen").textContent = eintrag.notizen;
+        document.getElementById("viewNotizen").textContent = eintrag.notizen;
+
+        openModal(viewTaskModal);
+    } else {
+        console.error("Aufgabe nicht gefunden!");
+    }
+}
+
+
+
+// Bearbeiten von Aufgaben/Einträgen
+function bearbeiten(eintragId) {
+    const eintrag = eintraege.find(e => e.id === eintragId);
+    if (eintrag && eintrag.isExample) {
+        showAlert("Der Beispiel-Eintrag kann nicht bearbeitet werden.");
+        return;
+    }
+
+    if (eintrag) {
+        openModal(editModal);
+        currentlyEditingId = eintragId;
         document.querySelector("#editAufgabe").value = eintrag.name;
         document.querySelector("#editFaellig").value = eintrag.faellig;
         document.querySelector("#editErinnerung").value = eintrag.erinnerung;
@@ -108,53 +152,68 @@ function bearbeiten(eintragId) {
     }
 }
 
-// Event Listener zum Speichern der Änderungen (wird nur einmalig hinzugefügt)
+// Eventlistener für das Bearbeiten von Aufgaben/Einträgen
 editTaskBtn.addEventListener("click", e => {
     e.preventDefault();
-
-    // Prüfe, ob currentlyEditingId gesetzt ist
     if (currentlyEditingId !== null) {
-        // Finde den Eintrag und aktualisiere ihn mit den neuen Werten
         const eintragToUpdate = eintraege.find(e => e.id === currentlyEditingId);
         if (eintragToUpdate) {
             eintragToUpdate.name = document.querySelector("#editAufgabe").value;
             eintragToUpdate.faellig = document.querySelector("#editFaellig").value;
             eintragToUpdate.erinnerung = document.querySelector("#editErinnerung").value;
             eintragToUpdate.notizen = document.querySelector("#notizen").value;
-
-            // UI aktualisieren
             updateUI();
-
-            // Modal schließen und ID zurücksetzen
-            editModal.style.display = "none";
+            closeModal(editModal);
             currentlyEditingId = null;
         }
     }
 });
 
 // Schließen des Bearbeitungsmodals
-closeEditModal.onclick = () => {
-    editModal.style.display = "none";
-    currentlyEditingId = null;  // Setze die aktuell bearbeitete Aufgabe zurück
-};
-
-document.getElementById("closeEditForm").onclick = () => {
-    editModal.style.display = "none";
-    currentlyEditingId = null;  // Setze die aktuell bearbeitete Aufgabe zurück
-};
-
-
-
+closeViewModal.onclick = () => closeModal(viewTaskModal);
+closeEditModal.onclick = () => closeModal(editModal);
 
 // Erster Beispiel-Eintrag
-if(eintraege.length === 0){
+if (eintraege.length === 0) {
     eintraege.push({
         name: "Aufgabentitel",
         faellig: "02.03.2024",
-        erinnerung: "05.03.2024 15:00",
-        notizen: "",
-        completed: false
+        erinnerung: "05.03.2025 15:00",
+        id: "1727768393001",
+        notizen: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+        completed: false,
+        isExample: true 
     });
 }
-
 html_eintrag(eintraege[0]);
+
+// Aufruf viewModal für den ersten Beispiel-Eintrag
+document.querySelector(".task-floating").addEventListener("click", function() {
+        anzeigen("1727768393001");
+});
+
+// Das Escapen von Modals
+document.addEventListener("keyup", e => {
+        if(e.key === "Escape"){
+            modal.style.display = "none";
+            viewTaskModal.style.display = "none";
+            editModal.style.display = "none";
+        }
+});
+
+// Custom Alert Meldung
+function showAlert(message) {
+    document.getElementById("modalBody").innerText = message;
+    document.getElementById("alertModal").style.display = "block";
+};
+
+document.getElementById("closeModal").onclick = function() {
+    document.getElementById("alertModal").style.display = "none"; 
+};
+
+window.onclick = function(event) {
+    const modal = document.getElementById("alertModal");
+    if (event.target === modal) {
+        modal.style.display = "none"; 
+    }
+};
