@@ -30,17 +30,10 @@ function updateUI() {
     // indem überprüft wird, ob die Checkbox für jeden Eintrag angekreuzt ist, und gibt dieses Objekt zurück.
     function speicherCheckboxStatus() {
         let checkboxStatus = {};
-        
         eintraege.forEach(eintrag => {
-
             let taskFloating = document.querySelector(`.task-floating[data-id="${eintrag.id}"]`);
-            
- 
             if (taskFloating) {
-
                 let checkbox = taskFloating.parentNode.querySelector(".checkbox");
-                
-
                 if (checkbox) {
                     checkboxStatus[eintrag.id] = checkbox.checked;
                 }
@@ -48,7 +41,6 @@ function updateUI() {
                 console.warn(`Kein Task gefunden für Eintrag mit ID ${eintrag.id}`);
             }
         });
-    
         return checkboxStatus;
     }
 
@@ -100,6 +92,7 @@ function updateUI() {
         });
     });
 
+    // Zeigt Details von jedem Eintrag in einem Modal-Fenster.
     // Fügt jedem Element mit der Klasse "task-floating" einen Klick-Event-Listener hinzu,
     // der beim Klicken die zugehörigen Details des Eintrags anzeigt, basierend auf der ID im data-Attribut.
     let taskFloatingElements = document.querySelectorAll(".task-floating");

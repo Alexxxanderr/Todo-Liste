@@ -86,6 +86,10 @@ body {
     align-items: baseline;
 }
 
+.container_archiv .task-floating {
+    padding-left: 35px;
+}
+
 .task-title, .container_archiv .task-title {
     padding-left: 3px;
     font-size: 1.2rem;
@@ -102,6 +106,9 @@ body {
     font-size: 0.8rem;
     color: #888;
     text-align: left;
+}
+.erinnerung_datum {
+    margin-left: 2px;
 }
 
 .faellig_datum_rot {

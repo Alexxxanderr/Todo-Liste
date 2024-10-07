@@ -9,8 +9,10 @@ const btn_close = document.getElementById("button_close");
 const subheader = document.querySelector(".subheader");
 const viewTaskModal = document.getElementById("viewTaskModal");
 const editModal = document.getElementById("editModal");
+const editForm = document.getElementById("editForm");
 const closeViewModal = document.querySelector(".close-view");
 const closeEditModal = document.querySelector(".close-edit");
+const closeEditForm = document.querySelector("#closeEditForm");
 const editTaskBtn = document.getElementById("editTask");
 const openModalBtn_archiv = document.getElementById("openModalBtn_archiv");
 const container_archiv = document.querySelector(".container_archiv"); // Archivcontainer
@@ -57,22 +59,29 @@ btn.onclick = () => openModal(modal);
 span.onclick = () => closeModal(modal);
 btn_close.onclick = () => closeModal(modal);
 closeViewModal.onclick = () => closeModal(modal);
+closeEditForm.onclick = () => closeModal(editModal);
 openModalBtn_archiv.onclick = () => open_archiv();
 
 window.onclick = (event) => {
     if (event.target == modal) closeModal(modal);
 };
 
-// Formularübertragung verarbeiten
+// Hier ist der Beginn. Eingabe von Aufgaben.
 form.addEventListener("submit", event => {
 
     event.preventDefault();
-    let name = document.getElementById("aufgabe").value;
+    let name = document.getElementById("aufgabe").value.trim();
     let faellig = document.getElementById("faellig").value;
     let erinnerung = document.getElementById("erinnerung").value;
 
-    if(eintraege[0].name === "Aufgabentitel"){
-        eintraege.pop(eintraege[0]);
+    if (name.length < 3) {
+        showAlert("Der Aufgabentitel muss mindestens 3 Zeichen lang sein.");
+        return; // Bricht die Ausführung ab, wenn der Titel zu kurz ist
+    }
+
+    const beispiel_eintrag = eintraege.findIndex(eintrag => eintrag.id === "1727768393001");
+    if (beispiel_eintrag !== -1) {
+        eintraege.splice(beispiel_eintrag, 1);
     }
 
     eintraege.push({
@@ -85,7 +94,9 @@ form.addEventListener("submit", event => {
         isExample: false
     });
 
+    // Ab Hier der Sprung in die updateUI();
     updateUI();
+    eintraege_speichern();
     form.reset();
     closeModal(modal);
 });
@@ -99,9 +110,10 @@ setInterval(function() {
 
 // Löschen von Aufgaben
 function loeschen(id) {
-    let confirmed = confirm('Willst du wirklich diese Aufgabe löschen?'); 
+    let confirmed = confirm('Willst du endgültig löschen oder doch zuerst ins Archiv verschieben?! Dann klick auf Abbrechen.'); 
 	if (confirmed) {
         eintraege = eintraege.filter(eintrag => eintrag.id !== id);
+        eintraege_speichern();
         updateUI(); 
     }
 }
@@ -132,8 +144,6 @@ function anzeigen(eintragId) {
     }
 }
 
-
-
 // Bearbeiten von Aufgaben/Einträgen
 function bearbeiten(eintragId) {
     const eintrag = eintraege.find(e => e.id === eintragId);
@@ -162,6 +172,8 @@ editTaskBtn.addEventListener("click", e => {
             eintragToUpdate.faellig = document.querySelector("#editFaellig").value;
             eintragToUpdate.erinnerung = document.querySelector("#editErinnerung").value;
             eintragToUpdate.notizen = document.querySelector("#notizen").value;
+            eintraege_speichern();
+            editForm.reset();
             updateUI();
             closeModal(editModal);
             currentlyEditingId = null;
@@ -173,19 +185,27 @@ editTaskBtn.addEventListener("click", e => {
 closeViewModal.onclick = () => closeModal(viewTaskModal);
 closeEditModal.onclick = () => closeModal(editModal);
 
+// Stellt Einträge aus dem LocalStorage wiederher
+eintraege_wiederherstellen();
+archiv_wiederherstellen();
+
 // Erster Beispiel-Eintrag
-if (eintraege.length === 0) {
+if (!localStorage.getItem("eintraege")) {
     eintraege.push({
         name: "Aufgabentitel",
         faellig: "02.03.2024",
         erinnerung: "05.03.2025 15:00",
         id: "1727768393001",
-        notizen: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
+        notizen: "Lorem ipsum dolor sit amet...",
         completed: false,
-        isExample: true 
+        isExample: true
     });
 }
 html_eintrag(eintraege[0]);
+
+// Selbsterklärend
+updateUI();
+render_archiv(); 
 
 // Aufruf viewModal für den ersten Beispiel-Eintrag
 document.querySelector(".task-floating").addEventListener("click", function() {
@@ -198,6 +218,7 @@ document.addEventListener("keyup", e => {
             modal.style.display = "none";
             viewTaskModal.style.display = "none";
             editModal.style.display = "none";
+            form.reset();
         }
 });
 

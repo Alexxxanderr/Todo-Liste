@@ -4,6 +4,11 @@
 // Sie verarbeitet auch Aufgabenattribute wie Fälligkeitsdatum, Erinnerung und Bearbeitungs-/Lösch-Optionen.
 function html_eintrag(eintrag) {
     
+    if (!eintrag) {
+        console.error('Der Eintrag ist nicht definiert.');
+        return;
+    }
+
     // Konvertiert die Erinnerungs- und Fälligkeitsdaten in deutsche Datumsformate, 
     let faellig = new Date(eintrag.faellig);
     faellig = faellig.toLocaleString("de-DE", {
@@ -61,10 +66,13 @@ function html_eintrag(eintrag) {
         task_details.insertAdjacentElement("beforeend", erinnerung_datum);
     }
 
-    // Wenn der Eintrag als abgeschlossen markiert ist, werden der Titel und die Details durchgestrichen dargestellt.
+    // Überprüfe den Eintrag auf den "completed"-Status und wende das Durchstreichen an
     if (eintrag.completed) {
         task_titel.classList.add("durchgestrichen");
         task_details.classList.add("durchgestrichen");
+        checkbox.checked = true;  // Checkbox auf "checked" setzen, wenn der Eintrag abgeschlossen ist
+    } else {
+        checkbox.checked = false;  // Checkbox auf "unchecked" setzen, wenn der Eintrag nicht abgeschlossen ist
     }
 
     // Fügt die verschiedenen Teile der Aufgabe (Titel, Details, Checkbox, Aktionen) in das HTML-Element ein
@@ -98,15 +106,14 @@ function html_eintrag(eintrag) {
     let subheader = document.querySelector(".subheader");
     subheader.insertAdjacentElement("afterend", task);
 
-    // Überprüfe, ob die Aufgabe abgeschlossen ist und zeige das Archiv-Symbol an
+    // Zeige das Archiv-Symbol nur, wenn die Aufgabe abgeschlossen ist
     if (eintrag.completed) {
         i_archive.classList.remove("display_none");
     } else {
         i_archive.classList.add("display_none");
     }
 
-    // Fügt einen Event-Listener zur Checkbox hinzu, der bei Änderung den Status der Aufgabe (abgeschlossen/nicht abgeschlossen)
-    // ändert und das visuelle Erscheinungsbild (durchgestrichen/nicht durchgestrichen) sowie die Sichtbarkeit des Archivsymbols anpasst.
+    // Event-Listener zur Checkbox: Aktualisiert den Status der Aufgabe und das visuelle Erscheinungsbild
     checkbox.addEventListener("change", (e) => {
         if (e.target.checked) {
             task_titel.classList.add("durchgestrichen");
@@ -119,6 +126,9 @@ function html_eintrag(eintrag) {
             i_archive.classList.add("display_none");
             eintrag.completed = false;
         }
+
+        // Speichere die Einträge erneut in `localStorage`, um den aktualisierten Status zu sichern
+        eintraege_speichern();
     });
 
     return task;
