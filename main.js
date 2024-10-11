@@ -144,9 +144,13 @@ function anzeigen(eintragId) {
     }
 }
 
-// Bearbeiten von Aufgaben/Einträgen
+// Funktion: Bearbeiten von Aufgaben/Einträgen
 function bearbeiten(eintragId) {
+    displayFiles(eintragId);
     const eintrag = eintraege.find(e => e.id === eintragId);
+    let t = document.querySelector(".task-floating");
+    console.log(eintragId);
+
     if (eintrag && eintrag.isExample) {
         showAlert("Der Beispiel-Eintrag kann nicht bearbeitet werden.");
         return;
@@ -155,6 +159,7 @@ function bearbeiten(eintragId) {
     if (eintrag) {
         openModal(editModal);
         currentlyEditingId = eintragId;
+        document.querySelector("#editAufgabe").setAttribute("data-id", eintragId);
         document.querySelector("#editAufgabe").value = eintrag.name;
         document.querySelector("#editFaellig").value = eintrag.faellig;
         document.querySelector("#editErinnerung").value = eintrag.erinnerung;
@@ -162,7 +167,7 @@ function bearbeiten(eintragId) {
     }
 }
 
-// Eventlistener für das Bearbeiten von Aufgaben/Einträgen
+// Eventlistener für den Button Änderungen speichern
 editTaskBtn.addEventListener("click", e => {
     e.preventDefault();
     if (currentlyEditingId !== null) {
@@ -238,3 +243,4 @@ window.onclick = function(event) {
         modal.style.display = "none"; 
     }
 };
+

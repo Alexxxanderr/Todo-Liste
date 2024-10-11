@@ -48,6 +48,10 @@ function html_eintrag(eintrag) {
     let erinnerung_datum = document.createElement("div");
     erinnerung_datum.setAttribute("class", "erinnerung_datum");
 
+    // File-Upload-Element der Aufgabe zuordnen
+    let fileUpload = document.querySelector("#fileUpload");
+    fileUpload.onclick = () => uploadFile(eintrag.id);
+
     // Überprüft, ob ein Fälligkeitsdatum und/oder eine Erinnerung vorhanden ist und zeigt die entsprechenden Informationen an.
     // Wenn keine Daten vorhanden sind, wird eine Aufforderung zum Setzen von Datum oder Erinnerung angezeigt.
     if (eintrag.faellig === "" && eintrag.erinnerung === "") {

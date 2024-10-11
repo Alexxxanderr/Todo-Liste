@@ -90,7 +90,14 @@
                 </div>
                 <div>
                     <label for="fileUpload">Datei anhängen:</label>
-                    <input type="file" id="fileUpload" name="fileUpload"><br><br>
+                    <div id="DivfileUpload">
+                        <input type="file" id="fileUpload" name="fileUpload">
+                        <i id="uploadIcon" class="fas fa-cloud-upload-alt" onclick="uploadFile()"></i><br><br>
+                    </div>
+                </div>
+                <div class="file-item">
+                    <a href="#" class="file-link">Gerdt.mp4</a>
+                    <i class="fas fa-trash delete-icon" title="Löschen"></i>
                 </div>
 
                 <button type="button" id="closeEditForm">Abbrechen</button>
@@ -111,7 +118,11 @@
         </div>
     </div>
 
+
+
+
     <script src="localStorage.js" defer></script>
+    <script src="files.js" defer></script>
     <script src="datum_de.js" defer></script>
     <script src="archiv.js" defer></script>
     <script src="update_ui.js" defer></script>
