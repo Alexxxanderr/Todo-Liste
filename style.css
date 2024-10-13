@@ -422,6 +422,11 @@ button:hover {
     flex-direction: row;
 }
 
+.modal-content > .file-item {
+    width: 100%;
+    margin-left: 0;
+}
+
 
 /* Anpassung für kleine Bildschirme */
 @media (max-width: 500px) {

@@ -45,8 +45,9 @@ function uploadFile() {
         const request = objectStore.add(data);
         request.onsuccess = () => {
             console.log('Datei erfolgreich gespeichert');
-            displayFiles(id); 
-            fileInput.value = '';
+            // Hier stellen wir sicher, dass die Datei nach dem Upload angezeigt wird
+            displayFiles(id, true, '#editModal .file-item'); // Aktualisiere die Datei-Liste im editModal
+            fileInput.value = ''; // Dateiinput zurücksetzen
         };
         request.onerror = (error) => {
             console.error('Fehler beim Speichern:', error);
@@ -57,8 +58,8 @@ function uploadFile() {
 
 
 // Funktion zum Anzeigen der gespeicherten Dateien
-function displayFiles(taskId) {
-    const fileList = document.querySelector('.file-item');
+function displayFiles(taskId, showDeleteIcon = true, targetElementSelector = '.file-item') {
+    const fileList = document.querySelector(targetElementSelector);
     fileList.innerHTML = ''; // Leere den Dateiliste-Container
 
     const transaction = db.transaction('files', 'readonly');
@@ -67,7 +68,10 @@ function displayFiles(taskId) {
     const request = objectStore.getAll();
     request.onsuccess = (event) => {
         const files = event.target.result;
-        const filteredFiles = files.filter(file => file.taskId === taskId); // Filtern nach Aufgabe-ID
+
+        // Konvertiere taskId in String und vergleiche mit file.taskId
+        const filteredFiles = files.filter(file => String(file.taskId) === String(taskId)); // Filtern nach Aufgabe-ID
+
         if (filteredFiles.length === 0) {
             fileList.innerHTML = '<p>Keine Dateien hochgeladen.</p>';
         } else {
@@ -85,18 +89,26 @@ function displayFiles(taskId) {
                 };
                 fileItem.appendChild(link);
 
-                // Erstelle das Lösch-Icon (FontAwesome Icon) und füge die Löschfunktion hinzu
-                const deleteIcon = document.createElement('i');
-                deleteIcon.classList.add('fas', 'fa-trash', 'delete-icon', 'm-left');
-                deleteIcon.title = 'Löschen'; // Tooltip für das Icon
-                deleteIcon.onclick = () => deleteFile(file.id); // Funktionsaufruf zum Löschen der Datei
-                fileItem.appendChild(deleteIcon); // Füge das Icon zum Dateielement hinzu
+                // Lösch-Icon nur anzeigen, wenn `showDeleteIcon` true ist
+                if (showDeleteIcon) {
+                    const deleteIcon = document.createElement('i');
+                    deleteIcon.classList.add('fas', 'fa-trash', 'delete-icon', 'm-left');
+                    deleteIcon.title = 'Löschen'; // Tooltip für das Icon
+                    deleteIcon.onclick = () => deleteFile(file.id); // Funktionsaufruf zum Löschen der Datei
+                    fileItem.appendChild(deleteIcon); // Füge das Icon zum Dateielement hinzu
+                }
 
                 fileList.appendChild(fileItem);
             });
         }
     };
+
+    request.onerror = (error) => {
+        console.error("Fehler beim Abrufen der Dateien:", error);
+    };
 }
+
+
 
 function openFile(id) {
     const transaction = db.transaction('files', 'readonly');
@@ -121,13 +133,30 @@ function deleteFile(id) {
     const transaction = db.transaction('files', 'readwrite');
     const objectStore = transaction.objectStore('files');
 
-    const request = objectStore.delete(id);
-    request.onsuccess = () => {
-        console.log('Datei erfolgreich gelöscht');
-        displayFiles(); // Liste nach dem Löschen aktualisieren
+    // Zuerst holen wir uns die Datei, um die taskId zu erhalten
+    const requestGet = objectStore.get(id);
+    requestGet.onsuccess = (event) => {
+        const file = event.target.result;
+        if (!file) {
+            console.error('Datei nicht gefunden.');
+            return;
+        }
+
+        // Lösche die Datei aus der Datenbank
+        const requestDelete = objectStore.delete(id);
+        requestDelete.onsuccess = () => {
+            console.log('Datei erfolgreich gelöscht');
+
+            // Rufe displayFiles mit der entsprechenden taskId auf, um die Dateiliste zu aktualisieren
+            displayFiles(file.taskId, true, '#editModal .file-item'); // Bei Bedarf anpassen, ob editModal oder andere Modal angezeigt wird
+        };
+        requestDelete.onerror = (error) => {
+            console.error('Fehler beim Löschen der Datei:', error);
+        };
     };
-    request.onerror = (error) => {
-        console.error('Fehler beim Löschen:', error);
+
+    requestGet.onerror = (error) => {
+        console.error('Fehler beim Abrufen der Datei:', error);
     };
 }
 

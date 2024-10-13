@@ -138,6 +138,17 @@ function anzeigen(eintragId) {
         document.getElementById("viewNotizen").textContent = eintrag.notizen;
         document.getElementById("viewNotizen").textContent = eintrag.notizen;
 
+        // Leere den bisherigen Inhalt in "dateien"
+        document.getElementById("dateien").innerHTML = "";
+
+        // Erstelle ein neues Div-Element zur Dateianzeige und hänge es an das <p id="dateien"> an
+        const fileItemDiv = document.createElement('div');
+        fileItemDiv.classList.add('file-item');
+        document.getElementById("dateien").appendChild(fileItemDiv);
+
+        // Zeige die Dateien an, aber ohne Lösch-Icons
+        displayFiles(eintragId, false);
+
         openModal(viewTaskModal);
     } else {
         console.error("Aufgabe nicht gefunden!");
@@ -146,10 +157,7 @@ function anzeigen(eintragId) {
 
 // Funktion: Bearbeiten von Aufgaben/Einträgen
 function bearbeiten(eintragId) {
-    displayFiles(eintragId);
     const eintrag = eintraege.find(e => e.id === eintragId);
-    let t = document.querySelector(".task-floating");
-    console.log(eintragId);
 
     if (eintrag && eintrag.isExample) {
         showAlert("Der Beispiel-Eintrag kann nicht bearbeitet werden.");
@@ -159,11 +167,22 @@ function bearbeiten(eintragId) {
     if (eintrag) {
         openModal(editModal);
         currentlyEditingId = eintragId;
+
+        // Setze die Formulardaten
         document.querySelector("#editAufgabe").setAttribute("data-id", eintragId);
         document.querySelector("#editAufgabe").value = eintrag.name;
         document.querySelector("#editFaellig").value = eintrag.faellig;
         document.querySelector("#editErinnerung").value = eintrag.erinnerung;
         document.querySelector("#notizen").value = eintrag.notizen;
+
+        // Verhindere, dass der Dateibereich aus einer alten Aufgabe falsche Dateien anzeigt
+        const fileList = document.querySelector('#editModal .file-item');
+        fileList.innerHTML = '<p>Keine Dateien hochgeladen.</p>';
+
+        // Lade die Dateien für die aktuelle Aufgabe asynchron
+        setTimeout(() => {
+            displayFiles(eintragId, true, '#editModal .file-item'); // Passendes Ziel-Element für das editModal
+        }, 100); // Ein kleiner Timeout, um sicherzustellen, dass die Aufgabe-Daten korrekt geladen sind
     }
 }
 
