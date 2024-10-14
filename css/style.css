@@ -15,6 +15,20 @@ body {
     color: #333;
 }
 
+.info {
+    display: block; 
+    padding: 6px;
+    width: 50px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    color: whitesmoke;
+    text-align: left; 
+    margin-left: 10px; 
+    margin-top: 10px;
+    background-color: rgba(255, 0, 0, 0.737);
+}
+
 .container, .container_archiv {
     max-width: 500px;
     margin: 100px auto 40px auto;
@@ -88,6 +102,10 @@ body {
 
 .container_archiv .task-floating {
     padding-left: 35px;
+}
+
+.task-floating:hover {
+    cursor: pointer;
 }
 
 .task-title, .container_archiv .task-title {
@@ -285,8 +303,9 @@ button:hover {
     overflow-y: auto; 
 }
 #viewTaskModal .modal-content span {
-    float: right; 
+    float: right!Important; 
     color: rgb(88, 88, 88);
+    text-align: right;
 }
 #viewNotizen {
     padding-bottom: 20px;
@@ -408,13 +427,15 @@ button:hover {
 
 .m-left {
     margin-top: 4px;
-    margin-left: 20px;
+    margin-left: 40px;
+    text-align: right;
 }
 
 .dateiDiv {
     display: flex;
     flex-direction: row;
     margin: 4px 0;
+    text-align: left;
 }
 
 #DivfileUpload {
@@ -425,6 +446,13 @@ button:hover {
 .modal-content > .file-item {
     width: 100%;
     margin-left: 0;
+}
+
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 220px!important;   
 }
 
 
@@ -470,5 +498,31 @@ button:hover {
     .file-item {
         width: 100%;
         margin-left: 0px;
+    }
+    
+    .ellipsis {
+        width: 120px!important; 
+    }
+
+    .m-left {
+        margin-left: 160px;
+    }
+}
+
+@media (max-width: 420px) {
+    .m-left {
+        margin-left: 120px;
+    }
+}
+
+@media (max-width: 380px) {
+    .m-left {
+        margin-left: 100px;
+    }
+}
+
+@media (max-width: 360px) {
+    .m-left {
+        margin-left: 80px;
     }
 }

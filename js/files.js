@@ -15,6 +15,13 @@ request.onsuccess = (event) => {
     console.log('IndexedDB erfolgreich geöffnet');
 };
 
+/* 
+Die Funktion uploadFile lädt eine ausgewählte Datei hoch, liest deren Inhalt mithilfe eines 
+FileReader ein und speichert die Datei in der IndexedDB mit einer Verknüpfung zur jeweiligen 
+Aufgaben-ID. Nach erfolgreichem Speichern wird die Dateiliste im Editier-Modal aktualisiert 
+und der Datei-Input zurückgesetzt.
+*/
+
 function uploadFile() {
     const fileInput = document.getElementById('fileUpload');
     const file = fileInput.files[0];
@@ -22,7 +29,6 @@ function uploadFile() {
     id = parseInt(id);
 
     if (!file) {
-        console.error("Keine Datei ausgewählt");
         return;
     }
 
@@ -57,7 +63,11 @@ function uploadFile() {
 }
 
 
-// Funktion zum Anzeigen der gespeicherten Dateien
+/* 
+Die Funktion displayFiles zeigt alle Dateien an, die einer bestimmten taskId zugeordnet sind, 
+und fügt sie in ein spezifiziertes HTML-Element ein. Je nach der Option showDeleteIcon wird für 
+jede Datei zusätzlich ein Lösch-Icon angezeigt, das es ermöglicht, die Datei direkt aus der Liste zu entfernen.
+*/
 function displayFiles(taskId, showDeleteIcon = true, targetElementSelector = '.file-item') {
     const fileList = document.querySelector(targetElementSelector);
     fileList.innerHTML = ''; // Leere den Dateiliste-Container
@@ -82,6 +92,7 @@ function displayFiles(taskId, showDeleteIcon = true, targetElementSelector = '.f
                 // Erstelle einen Link zur Datei
                 const link = document.createElement('a');
                 link.href = '#'; // Verhindere direkten Link (wird später per Klick geöffnet)
+                link.classList.add('ellipsis');
                 link.textContent = file.name;
                 link.onclick = (e) => {
                     e.preventDefault();
@@ -108,7 +119,11 @@ function displayFiles(taskId, showDeleteIcon = true, targetElementSelector = '.f
     };
 }
 
-
+/* 
+Die Funktion openFile ruft eine Datei mit einer bestimmten id aus der IndexedDB ab und 
+erstellt daraus ein Blob-Objekt, das die Datei repräsentiert. Anschließend wird eine URL 
+für das Blob generiert und die Datei in einem neuen Browser-Tab geöffnet.
+*/
 
 function openFile(id) {
     const transaction = db.transaction('files', 'readonly');
@@ -128,7 +143,13 @@ function openFile(id) {
     };
 }
 
-// Funktion zum Löschen einer Datei
+/* 
+Die Funktion deleteFile löscht eine Datei mit der angegebenen id aus der IndexedDB, 
+nachdem sie die Datei abgerufen hat, um die zugehörige taskId zu erhalten. Nach dem 
+erfolgreichen Löschen wird displayFiles aufgerufen, um die Dateiliste basierend auf 
+der taskId im editModal oder einem anderen spezifischen Bereich zu aktualisieren.
+*/
+
 function deleteFile(id) {
     const transaction = db.transaction('files', 'readwrite');
     const objectStore = transaction.objectStore('files');

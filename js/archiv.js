@@ -79,7 +79,7 @@ function html_archiv_eintrag(eintrag) {
     task_floating.setAttribute("data-id", eintrag.id);
 
     let task_titel = document.createElement("div");
-    task_titel.setAttribute("class", "task-title durchgestrichen"); // Durchgestrichen für archivierte Einträge
+    task_titel.setAttribute("class", "task-title durchgestrichen ellipsis"); // Durchgestrichen für archivierte Einträge
     task_titel.innerHTML = eintrag.name;
 
     let task_details = document.createElement("div");

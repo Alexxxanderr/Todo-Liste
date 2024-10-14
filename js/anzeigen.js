@@ -36,7 +36,7 @@ function html_eintrag(eintrag) {
     task_floating.setAttribute("data-id", eintrag.id);
 
     let task_titel = document.createElement("div");
-    task_titel.setAttribute("class", "task-title");
+    task_titel.setAttribute("class", "task-title ellipsis");
     task_titel.innerHTML = eintrag.name;
 
     let task_details = document.createElement("div");
@@ -91,14 +91,17 @@ function html_eintrag(eintrag) {
 
     let i_archive = document.createElement("i");
     i_archive.setAttribute("class", "fa-solid fa-box-archive");
+    i_archive.setAttribute("title", "In das Archiv verschieben");
     i_archive.onclick = () => ins_archiv(eintrag.id);
 
     let i_bearbeiten = document.createElement("i");
     i_bearbeiten.setAttribute("class", "fa-solid fa-pen-to-square");
+    i_bearbeiten.setAttribute("title", "Bearbeiten");
     i_bearbeiten.onclick = () => bearbeiten(eintrag.id);
 
     let i_loeschen = document.createElement("i");
     i_loeschen.setAttribute("class", "fa-solid fa-trash-can");
+    i_loeschen.setAttribute("title", "Aufgabe löschen");
     i_loeschen.onclick = () => loeschen(eintrag.id);
 
     task_actions.insertAdjacentElement("afterbegin", i_loeschen);

@@ -37,9 +37,7 @@ function updateUI() {
                 if (checkbox) {
                     checkboxStatus[eintrag.id] = checkbox.checked;
                 }
-            } else {
-                console.warn(`Kein Task gefunden für Eintrag mit ID ${eintrag.id}`);
-            }
+            } 
         });
         return checkboxStatus;
     }

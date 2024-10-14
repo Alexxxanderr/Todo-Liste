@@ -28,7 +28,9 @@ function datum_anzeigen() {
         year: "numeric",
         month: "long",
         day: "numeric",
-        weekday: "long"
+        weekday: "long",
+        hour: "2-digit",
+        minute:	"2-digit"
     });
     subheader.innerHTML = datum_heute_DE;
 }

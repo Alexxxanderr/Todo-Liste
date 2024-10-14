@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://kit.fontawesome.com/995bbca491.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
     <title>Todo-Liste</title>
     <style>
     </style>
 </head>
 <body>
+
+    <a href="#" class="info" onclick="showAlert('Dieses Programm funktioniert ausschließlich clientseitig! Das heißt, wenn sie in einem anderen Browser Ihre Aufgaben einsehen möchten dann wird es nicht funktionieren. Ebenso wenn sie ihre Browserdaten löschen dann löschen sie alle ihre Aufgaben samt Daten.')">INFO</a>
 
     <!-- Aufgaben Auflistung -->
     <div class="container">
@@ -59,7 +61,7 @@
         <div class="modal-content">
             <span class="close-view">&times;</span>
             <h2>Aufgabe ansehen</h2>
-            <p><strong>Aufgabe:</strong> <span id="viewAufgabe"></span></p>
+            <p><strong>Aufgabe:</strong> <span id="viewAufgabe" class="ellipsis"></span></p>
             <p><strong>Fälligkeitsdatum:</strong> <span id="viewFaellig"></span></p>
             <p><strong>Erinnerung:</strong> <span id="viewErinnerung"></span></p>
             <p id="dateien"><strong>Dateien:</strong></p>
@@ -122,12 +124,12 @@
 
 
 
-    <script src="localStorage.js" defer></script>
-    <script src="files.js" defer></script>
-    <script src="datum_de.js" defer></script>
-    <script src="archiv.js" defer></script>
-    <script src="update_ui.js" defer></script>
-    <script src="anzeigen.js" defer></script>
-    <script src="main.js" defer></script>
+    <script src="./js/localStorage.js" defer></script>
+    <script src="./js/files.js" defer></script>
+    <script src="./js/datum_de.js" defer></script>
+    <script src="./js/archiv.js" defer></script>
+    <script src="./js/update_ui.js" defer></script>
+    <script src="./js/anzeigen.js" defer></script>
+    <script src="./js/main.js" defer></script>
 
 </body>
